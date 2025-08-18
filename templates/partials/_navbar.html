@@ -1,0 +1,43 @@
+{% load static %}
+<nav class="bg-[#0C0C0C] sticky top-0 z-50">
+    <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div class="relative flex h-16 items-center justify-between">
+            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            </div>
+            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <div class="flex shrink-0 items-center">
+                    <a class="rounded-md px-3 py-2 text-sm font-medium text-white  hover:bg-gray-700"
+                       href="{% url 'home' %}">
+                        <img class="h-8 w-auto"
+                             src="{% static 'img/logo.png' %}"
+                             alt="Gaming Hub"/>
+                    </a>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex flex-1 items-center">
+                    <!-- Sol linkler -->
+                    <div class="flex space-x-4 py-5">
+                        <a href="{% url 'all_games' %}"
+                           class="rounded-md px-3 py-2 text-xl font-medium text-gray-300 hover:bg-gray-700 hover:text-white">All Games</a>
+                    </div>
+                    <!-- Sağ Linkler -->
+                    <div class="ml-auto flex space-x-4">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'logout' %}?next={{ request.path }}"
+                               class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Log
+                                Out</a>
+                            <a href="{% url 'profile' %}"
+                               class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Profile</a>
+                        {% else %}
+                            <a href="{% url 'register' %}"
+                               class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register
+                            </a>
+                            <a href="{% url 'login' %}"
+                               class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

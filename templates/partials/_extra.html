@@ -1,0 +1,32 @@
+{% load static %}
+<div class="mb-1 bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex items-start gap-4">
+    <!-- Görsel -->
+    {% if game.img %}
+        <!-- RAWG API'den gelen kapak fotoğrafını öncelikle göster -->
+        <img src="{{ game.img }}" class="w-32 h-auto object-cover rounded" alt="{{ game.title }}">
+    {% elif game.image %}
+        <!-- Admin panelinden yüklenen fotoğrafı göster -->
+        <img src="{{ game.image.url }}" class="w-32 h-auto object-cover rounded" alt="{{ game.title }}">
+    {% else %}
+        <!-- Hiç fotoğraf yoksa placeholder göster -->
+        <div class="w-32 h-24 bg-gray-200 flex items-center justify-center rounded">
+            <span class="text-gray-500 text-xs">No Image</span>
+        </div>
+    {% endif %}
+    <!-- Sağdaki içerik -->
+    <div class="flex flex-col justify-start w-full">
+
+        <!-- Başlık sağ üstte -->
+        <div class="flex justify-center">
+            <a href="{% url 'extra_details' game.slug %}" class="text-xl font-semibold text-right">
+                {{ game.title }}
+            </a>
+        </div>
+        <div> {{ game.description|safe }} </div>
+    </div>
+</div>
+
+<div>
+
+
+</div>

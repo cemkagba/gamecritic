@@ -1,0 +1,604 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load blog_extras %}
+{% block title %}{{ game.title }} - Game Details{% endblock %}
+{% block asd %}
+    {% load widget_tweaks %}
+
+    <style>
+        .description-text {
+            text-align: justify;
+            word-spacing: 0.1em;
+            hyphens: auto;
+        }
+        
+        .description-text p {
+            margin-bottom: 1em;
+            text-indent: 1em;
+        }
+        
+        .description-text p:first-child {
+            text-indent: 0;
+        }
+        
+        .description-text p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .description-scrollable {
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 #f7fafc;
+        }
+        
+        .description-scrollable::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .description-scrollable::-webkit-scrollbar-track {
+            background: #f7fafc;
+            border-radius: 3px;
+        }
+        
+        .description-scrollable::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+        
+        .description-scrollable::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        
+        #descriptionContent {
+            position: relative;
+        }
+        
+        .fade-bottom {
+            background: linear-gradient(to bottom, transparent, rgba(249, 250, 251, 0.8), rgb(249, 250, 251));
+        }
+    </style>
+
+    <div class="py-10 pb-20">
+        <div class="container mx-auto px-4 ">
+            <div class="flex justify-center my-6">
+                <div class="w-2/3 aspect-video mr-6">
+                    {% if game.trailer_video_id %}
+                        <iframe class="rounded-3xl w-full h-full" 
+                                src="https://www.youtube.com/embed/{{ game.trailer_video_id }}" 
+                                frameborder="0" 
+                                allowfullscreen
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                        </iframe>
+                    {% else %}
+                        {% if game.img %}
+                            <!-- RAWG API'den gelen kapak fotoğrafını öncelikle göster -->
+                            <img class="rounded-3xl w-full h-full object-cover" alt="{{ game.title }}"
+                                 src="{{ game.img }}">
+                        {% elif game.image %}
+                            <!-- Admin panelinden yüklenen fotoğrafı göster -->
+                            <img class="rounded-3xl w-full h-full object-cover" alt="{{ game.title }}"
+                                 src="{{ game.image.url }}">
+                        {% else %}
+                            <!-- Hiç fotoğraf yoksa placeholder göster -->
+                            <div class="rounded-3xl w-full h-full bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-500 text-lg">No Image Available</span>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="w-1/3 bg-white shadow-xl rounded-3xl p-6 font-sans">
+                    <p class="text-4xl font-bold pb-6 text-gray-800"> {{ game.title }} </p>
+                    
+                    <!-- Modern User Score Section -->
+                    <div class="p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                        </div>
+                        
+                        <div class="flex items-start justify-between gap-6">
+                            <!-- User Score Section (Left) -->
+                            <div class="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                                <div class="flex items-center mb-3">
+                                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                    <h4 class="text-sm font-semibold text-blue-800">User Score</h4>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-blue-700 mb-1" data-rating="{{ game.average_rating|default:'0' }}">
+                                        {{ game.average_rating|floatformat:1|default:"N/A" }}
+                                    </div>
+                                    <div class="text-xs text-blue-600">Based on {{ posts.count }} review{{ posts.count|pluralize }}</div>
+                                </div>
+                                <div class="mt-3 flex justify-center">
+                                    <div class="bg-white/50 rounded-full px-3 py-1">
+                                        <span class="text-xs font-medium text-blue-700" data-text="{{ game.average_rating|default:'0' }}">User Rating</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Info Section (Right) -->
+                            <div class="flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-4 border border-blue-200">
+                                <div class="flex items-center mb-3">
+                                    <svg class="w-5 h-5 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <h4 class="text-sm font-semibold text-indigo-800">Critics Score</h4>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-indigo-700 mb-1">{{game.metaScore}}</div>
+                                    <div class="text-xs text-indigo-600">Professional Reviews</div>
+                                </div>
+                                <div class="mt-3 flex justify-center">
+                                    <div class="bg-white/50 rounded-full px-3 py-1">
+                                        <span class="text-xs font-medium text-indigo-700">Universal</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Platform Section -->
+                    <div class="text-sm text-gray-600 border-b border-gray-200 pb-4 mb-6">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="font-medium">Platforms:</span>
+                            <span class="ml-2 px-2 py-1 bg-gray-100 rounded-full text-xs font-medium">{{ game.platform }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Game Description Section -->
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <h4 class="text-lg font-semibold text-gray-800">About this Game</h4>
+                            </div>
+                            <button id="toggleDescription" class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors hidden">
+                                <span id="toggleText">Show More</span>
+                                <svg id="toggleIcon" class="w-4 h-4 inline ml-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="gameDescription" class="relative">
+                            <div id="descriptionContent" class="prose prose-sm max-w-none text-gray-700 leading-relaxed text-justify transition-all duration-300 ease-in-out" style="line-height: 1.7; font-size: 14px;">
+                                {% if game.description %}
+                                    <div class="description-text">
+                                        {{ game.description|safe|linebreaks }}
+                                    </div>
+                                {% else %}
+                                    <div class="text-gray-500 italic text-center py-8">
+                                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <p>No description available for this game.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <!-- Gradient overlay for long text -->
+                            <div id="fadeOverlay" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-gray-100 to-transparent pointer-events-none hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Gallery Section -->
+            <div class="bg-white rounded-3xl shadow-lg mb-6">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                        {{ game.title }} Videos
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <!-- Horizontal Scrollable Video Container -->
+                    <div class="overflow-x-auto scrollbar-hide">
+                        <div class="flex gap-4 pb-2 justify-center" style="width: max-content; margin: 0 auto;">
+                            
+                            <!-- Tips Video -->
+                            {% if game.tips_video_id %}
+                                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow flex-shrink-0 cursor-pointer" 
+                                     style="width: 300px;" onclick="openVideoModal('{{ game.tips_video_id }}', '{{ game.title }} Tips')">
+                                    <div class="aspect-video bg-gray-200 relative">
+                                        <iframe class="w-full h-full rounded-t-lg" 
+                                                src="https://www.youtube.com/embed/{{ game.tips_video_id }}" 
+                                                frameborder="0" 
+                                                allowfullscreen></iframe>
+                                        <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8 5v14l11-7z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="p-3">
+                                        <h4 class="font-semibold text-gray-800 text-xs mb-1 truncate">{{ game.title }} Tips</h4>
+                                        <p class="text-gray-600 text-xs">Tips</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if game.gameplay_video_id %}
+                                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow flex-shrink-0 cursor-pointer" 
+                                     style="width: 300px;" onclick="openVideoModal('{{ game.gameplay_video_id }}', '{{ game.title }} Gameplay')">
+                                    <div class="aspect-video bg-gray-200 relative">
+                                        <iframe class="w-full h-full rounded-t-lg" 
+                                                src="https://www.youtube.com/embed/{{ game.gameplay_video_id }}" 
+                                                frameborder="0" 
+                                                allowfullscreen></iframe>
+                                        <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8 5v14l11-7z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="p-3">
+                                        <h4 class="font-semibold text-gray-800 text-xs mb-1 truncate">{{ game.title }} Gameplay</h4>
+                                        <p class="text-gray-600 text-xs">Gameplay</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Review Video -->
+                            {% if game.review_video_id %}
+                                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow flex-shrink-0 cursor-pointer" 
+                                     style="width: 300px;" onclick="openVideoModal('{{ game.review_video_id }}', '{{ game.title }} Review')">
+                                    <div class="aspect-video bg-gray-200 relative">
+                                        <iframe class="w-full h-full rounded-t-lg" 
+                                                src="https://www.youtube.com/embed/{{ game.review_video_id }}" 
+                                                frameborder="0" 
+                                                allowfullscreen></iframe>
+                                        <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8 5v14l11-7z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="p-3">
+                                        <h4 class="font-semibold text-gray-800 text-xs mb-1 truncate">{{ game.title }} Review</h4>
+                                        <p class="text-gray-600 text-xs">Review</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- No Videos Message -->
+                            {% if not game.gameplay_video_id and not game.review_video_id and not game.walkthrough_video_id %}
+                                <div class="text-center py-8 w-full">
+                                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="text-gray-500 text-lg mb-2">No videos available yet</p>
+                                    <p class="text-gray-400 text-sm">Click "Search Videos" to find YouTube content for this game</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Video Modal -->
+            <div id="videoModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                <!-- Modal Backdrop -->
+                <div class="min-h-screen px-4 text-center">
+                    <!-- Backdrop -->
+                    <div class="fixed inset-0 bg-black opacity-75" onclick="closeVideoModal()"></div>
+                    
+                    <!-- Center vertically -->
+                    <span class="inline-block h-screen align-middle"></span>
+                    
+                    <!-- Modal Content -->
+                    <div class="inline-block w-full max-w-6xl my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-lg overflow-hidden">
+                        <!-- Modal Header -->
+                        <div class="flex justify-between items-center p-4 border-b bg-gray-50">
+                            <h3 id="modalTitle" class="text-lg font-semibold text-gray-800"></h3>
+                            <button onclick="closeVideoModal()" class="text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-200 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Video Container -->
+                        <div class="relative">
+                            <div class="aspect-video bg-black">
+                                <iframe id="modalVideo" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                            </div>
+                        </div>
+                        <!-- Video Info -->
+                        <div class="p-4 bg-gray-50">
+                            <p class="text-sm text-gray-600 mb-2">
+                                🎮 Enjoy watching this video!
+                            </p>
+                            <div class="text-xs text-gray-500">
+                                Press <kbd class="px-2 py-1 bg-gray-200 rounded text-xs font-mono">ESC</kbd> to close or click outside the video
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center rounded-3xl mb-6 gap-6">
+                <!-- Comments Section -->
+                <div class="w-2/3 bg-white rounded-3xl shadow-lg">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                                User Reviews ({{ posts.count }})
+                            </h3>
+                            
+                            <!-- Sorting Buttons -->
+                            <div class="flex gap-2">
+                                {% for sort_key, sort_option in sort_options.items %}
+                                    <a href="?sort={{ sort_key }}" 
+                                       class="px-3 py-1.5 text-sm rounded-lg transition-all duration-200 
+                                              {% if current_sort == sort_key %}
+                                                  bg-blue-500 text-white shadow-md
+                                              {% else %}
+                                                  bg-gray-100 text-gray-700 hover:bg-gray-200
+                                              {% endif %}">
+                                        {{ sort_option.label }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 overflow-y-auto max-h-[400px]">
+                        {% for post in posts %}
+                            <div class="bg-gray-50 border border-gray-100 rounded-xl p-6 mb-4 hover:shadow-md transition-shadow review-box-{{ post.id }}">
+                                <!-- User Info Header -->
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                            {{ post.creator.username|slice:":1"|upper }}
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="font-semibold text-gray-800">{{ post.creator.username }}</p>
+                                            <p class="text-sm text-gray-500">{{ post.created_at|date:"M d, Y" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        {% if post.creator == request.user and post.rating %}
+                                            <button type="button" onclick="toggleEditForm({{ post.id }})"
+                                                    class="material-symbols-outlined mr-3 px-1 py-1 rounded-lg border border-blue-300 hover:bg-blue-100 hover:text-blue-600 cursor-pointer transition-all duration-200 text-blue-500">
+                                                edit
+                                            </button>
+                                        {% endif %}
+
+                                        {% if post.rating %}
+                                            <div class="flex items-center gap-2">
+                                                <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold review-rating">{{ post.rating }}/5</span>
+                                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
+                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                                    </svg>
+                                                    {{ post.like_count }}
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        {% if post.creator == request.user and post.rating %}
+                                            <form method="POST" action="{% url '_delete_review' post.id %}"
+                                                  style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        onclick="return confirm('Are you sure you want to delete this review?')"
+                                                        class="material-symbols-outlined ml-3 px-3 py-2 rounded-lg border border-red-300 hover:bg-red-100 hover:text-red-600 cursor-pointer transition-all duration-200 text-red-500">
+                                                    delete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Review Content -->
+                                <div class="mb-3">
+                                    <h4 class="font-bold text-lg text-gray-800 mb-2">{{ post.title }}</h4>
+                                    <div class="text-gray-700 leading-relaxed review-description-{{ post.id }}">{{ post.description|linebreaks }}
+
+                                    </div>
+                                </div>
+                                
+                                <!-- Like Button and Count -->
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="flex items-center">
+                                        {% if user.is_authenticated %}
+                                        <form method="POST" action="{% url 'toggle_like' post.id %}" class="like-form" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                            <button type="submit"
+                                                    class="like-button flex items-center px-3 py-1.5 rounded-lg transition-all duration-200
+                                                        {% if post.user_has_liked %} bg-red-100 text-red-600 hover:bg-red-200 {% else %}
+                                                        bg-gray-100 text-gray-600 hover:bg-gray-200 {% endif %}"
+                                                    data-post-id="{{ post.id }}">
+                                            <svg class="w-4 h-4 mr-1"
+                                                fill="{% if post.user_has_liked %}currentColor{% else %}none{% endif %}"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span class="text-sm font-medium like-count">{{ post.like_count|default:post.likes.count }}</span>
+                                            </button>
+                                        </form>
+
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="text-xs text-gray-500">
+                                        {{ post.updated_at|date:"M d, Y \a\t H:i" }}
+                                    </div>
+                                </div>
+
+                                <!-- Edit Form (Hidden by default) -->
+                                {% if post.creator == request.user and post.rating %}
+                                    <div id="edit-form-{{ post.id }}" class="hidden mt-4 p-4 bg-white border-2 border-blue-200 rounded-lg shadow-sm">
+                                        <form method="POST" action="{% url 'update_game_review' post.id %}" class="space-y-4">
+                                            {% csrf_token %}
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <!-- Title Field -->
+                                                <div>
+                                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                        <svg class="w-4 h-4 inline mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                        </svg>
+                                                        Review Title
+                                                    </label>
+                                                    <input type="text" name="title" value="{{ post.title }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" placeholder="Enter review title" required>
+                                                </div>
+
+                                                <!-- Rating Field -->
+                                                <div>
+                                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                        <svg class="w-4 h-4 inline mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                        </svg>
+                                                        Rating
+                                                    </label>
+                                                    <select name="rating" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" required>
+                                                        {% for i in "12345" %}
+                                                            <option value="{{ forloop.counter }}" {% if post.rating == forloop.counter %}selected{% endif %}>
+                                                                {{ forloop.counter }} Star{{ forloop.counter|pluralize }} ⭐
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Description Field -->
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                    <svg class="w-4 h-4 inline mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                                                    </svg>
+                                                    Review Description
+                                                </label>
+                                                <textarea name="description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 resize-none" placeholder="Write your review..." required>{{ post.description }}</textarea>
+                                            </div>
+
+                                            <!-- Action Buttons -->
+                                            <div class="flex justify-end space-x-3 pt-2">
+                                                <button type="button" onclick="toggleEditForm({{ post.id }})" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all duration-200 font-medium">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                    Cancel
+                                                </button>
+                                                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                    Save Changes
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="text-center py-12">
+                                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                                <p class="text-gray-500 text-lg">No reviews yet for this game.</p>
+                                <p class="text-gray-400 text-sm mt-1">Be the first to share your thoughts!</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Review Form Section -->
+                <div class="w-1/3 bg-white rounded-3xl shadow-lg">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Write a Review
+                        </h3>
+                    </div>
+                    <div class="p-6 overflow-y-auto max-h-[400px]">
+                        <form method="post" action="{% url 'create_review' slug %}" class="space-y-4" id="reviewForm">
+                            {% csrf_token %}
+
+                            <!-- Başlık Alanı -->
+                            <div class="mb-4">
+                                <label for="{{ form.title.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900">Review Title:</label>
+                                {{ form.title|add_class:"block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"|attr:"rows:1"|attr:"placeholder:Enter review title..." }}
+                                {{ form.title.errors }}
+                            </div>
+
+                            <!-- Star Rating Section -->
+                            <div class="mb-4">
+                                <label class="block mb-3 text-sm font-medium text-gray-900">How would you rate this
+                                    game?</label>
+
+                                <!-- Star Rating -->
+                                <div class="star-rating flex items-center mb-3 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                                    <span class="fa fa-star text-2xl text-gray-300 cursor-pointer mr-1 hover:text-yellow-400 hover:scale-110 transition-all duration-300"></span>
+                                    <span class="fa fa-star text-2xl text-gray-300 cursor-pointer mr-1 hover:text-yellow-400 hover:scale-110 transition-all duration-300"></span>
+                                    <span class="fa fa-star text-2xl text-gray-300 cursor-pointer mr-1 hover:text-yellow-400 hover:scale-110 transition-all duration-300"></span>
+                                    <span class="fa fa-star text-2xl text-gray-300 cursor-pointer mr-1 hover:text-yellow-400 hover:scale-110 transition-all duration-300"></span>
+                                    <span class="fa fa-star text-2xl text-gray-300 cursor-pointer mr-1 hover:text-yellow-400 hover:scale-110 transition-all duration-300"></span>
+                                </div>
+
+
+                                <p class="text-sm text-gray-600 font-medium" id="rating-text">Click a star to
+                                    rate</p>
+
+                                {{ form.rating|add_class:"hidden" }}
+
+
+                                {% if form.rating.errors %}
+                                    <div class="text-red-600 text-sm mt-2">{{ form.rating.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Yorum Alanı -->
+                            <div class="mb-4">
+                                <label for="{{ form.description.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900">Your Review:</label>
+                                {{ form.description|add_class:"block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"|attr:"rows:3"|attr:"placeholder:Write your review here..." }}
+                                {{ form.description.errors }}
+                            </div>
+
+                            <button class="mt-6 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                                    type="submit">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                                Submit Review
+                            </button>
+
+                            {% if error %}
+                                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mt-4">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,62 @@
+# Virtual environment
+myenv/
+venv/
+env/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Git
+.git/
+.gitignore
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+django.log
+
+# Database
+db.sqlite3
+*.sqlite3
+
+# Media files (uploaded files)
+uploads/
+media/
+
+# Static files (will be collected in container)
+staticfiles/
+
+# Node modules (for Tailwind)
+node_modules/
+npm-debug.log*
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentation
+README.md
+*.md
+
+# Test files
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Local environment files
+.env
+.env.local

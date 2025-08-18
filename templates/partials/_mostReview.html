@@ -1,0 +1,67 @@
+{% load static %}
+<div>
+    <div class="w-full px-2">
+        <div class="relative mb-8 border-b border-gray-700 ">
+            <h2 class="text-4xl mx-auto max-w-xl text-center font-bold py-4 mb-4 bg-gradient-to-r from-[#456882] to-[#D2C1B6] text-transparent bg-clip-text"
+                style="font-family: 'Bungee Spice', sans-serif;">
+                Most Reviewed
+            </h2>
+            <div class="absolute right-4 top-10 flex gap-2">
+                <button id="scroll-left1" type="button"
+                        class="hover:bg-gray-200 bg-white shadow p-2 rounded-full hidden md:block">
+                    <svg class="w-4 h-4 rotate-180 text-black" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </button>
+                <button id="scroll-right1" type="button"
+                        class="hover:bg-gray-200 bg-white shadow p-2 rounded-full hidden md:block">
+                    <svg class="w-4 h-4 text-black" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    <div id="game-slider1" class="flex overflow-x-auto gap-6 scroll-smooth pb-4 w-full max-w-full" style="scroll-snap-type: x mandatory;">
+            {% for game in page_obj2 %}
+                <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow flex-shrink-0" style="width: 23vw; min-width: 320px; max-width: 350px; min-height: 420px; scroll-snap-align: start;">
+                    <a href="{% url 'extra_details' game.slug %}">
+                        {% if game.img %}
+                            <img src="{{ game.img }}" alt="{{ game.title }}" class="rounded-md h-48 w-full object-cover mb-3">
+                        {% elif game.image %}
+                            <img src="{{ game.image.url }}" alt="{{ game.title }}" class="rounded-md h-48 w-full object-cover mb-3">
+                        {% else %}
+                            <div class="rounded-md h-48 w-full bg-gray-200 flex items-center justify-center mb-3">
+                                <span class="text-gray-500 text-sm">No Image</span>
+                            </div>
+                        {% endif %}
+                        <h3 class="text-lg font-semibold mb-2">{{ game.title }}</h3>
+                        <p class="text-gray-600 text-sm mb-2">{{ game.description|striptags|truncatewords:20|safe }}</p>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            {% for genre in game.genres.all %}
+                                <span class="text-xs text-blue-600 bg-blue-100 mr-1 px-2 py-1 rounded">{{ genre.name|title }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex flex-col items-start">
+                                <span class="text-xs text-gray-400 mb-1">{{ game.created_at|date:"M d, Y" }}</span>
+                                <span class="text-base font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded shadow mb-1 border border-blue-200">
+                                    {{ game.review_count }} Reviews
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold" data-rating="{{ game.average_rating|default:'0' }}">★ {{ game.average_rating|floatformat:1|default:"N/A" }}</span>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    <span class="text-lg font-bold" data-text="{{ game.average_rating|default:'0' }}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+

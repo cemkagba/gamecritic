@@ -1,0 +1,50 @@
+# Core Django
+Django==5.2.3
+asgiref==3.8.1
+
+# Database
+psycopg2-binary==2.9.10
+
+# Django Extensions
+djangorestframework==3.16.0
+django-widget-tweaks==1.5.0
+django-cotton==2.1.3
+django-ckeditor==6.7.3
+django-js-asset==3.1.2
+
+# Styling & Frontend
+django-tailwind==4.0.1
+
+# Development Tools
+django-browser-reload==1.18.0
+
+# Image Processing
+pillow==11.3.0
+
+# Utilities
+python-slugify==8.0.4
+python-dotenv==1.0.0
+arrow==1.3.0
+beautifulsoup4==4.12.3
+
+google-api-python-client==2.145.0
+
+# Selenium
+selenium==4.15.0
+webdriver-manager==4.0.1
+
+# Dependencies (auto-installed but listed for clarity)
+certifi==2025.6.15
+charset-normalizer==3.4.2
+idna==3.10
+python-dateutil==2.9.0.post0
+requests==2.32.4
+six==1.17.0
+sqlparse==0.5.3
+text-unidecode==1.3
+tzdata==2025.2
+urllib3==2.5.0
+Jinja2==3.1.6
+MarkupSafe==3.0.2
+PyYAML==6.0.2
+chardet==5.2.0

@@ -1,0 +1,35 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Django Game Reviews{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-200">
+{% include 'partials/_navbar.html' %}
+<main class="min-h-screen pb-16">
+    {% block asd %}{% endblock %}
+</main>
+{% include 'partials/_footer.html' %}
+<script src="{% static 'js/description-toggle.js' %}"></script>
+<script src="{% static 'js/video-modal.js' %}"></script>
+<script src="{% static 'js/review-edit-toggle.js' %}"></script>
+<script src="{% static 'js/button.js' %}"></script>
+<script src="{% static 'js/starRating.js' %}"></script>
+<script src="{% static 'js/editButton.js' %}"></script>
+<script src="{% static 'js/StarByAvg.js' %}"></script>
+<script src="{% static 'js/textByAvg.js' %}"></script>
+<script src="{% static 'js/ProfilePhoto.js' %}"></script>
+<script src="{% static 'js/review-ajax.js' %}"></script>
+<script src="{% static 'js/like-ajax.js' %}"></script>
+</body>
+</html>

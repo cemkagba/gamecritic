@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static tailwind_tags %}
+{% load widget_tweaks %}
+
+{% block asd %}
+    <div class="py-10 pb-20">
+    
+        <div class="max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6">
+            <!-- Kullanıcı Bilgileri -->
+            <div class="flex items-center space-x-6 mb-8">
+                <!-- Profil Fotoğrafı Formu -->
+                <form method="POST" action="{% url 'update_photo' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <img id="profile-img"
+                         src="{% if user.userprofile.photo %}{{ user.userprofile.photo.url }}{% else %}{% static 'profile.png' %}{% endif %}"
+                         alt="Profil Fotoğrafı"
+                         class="w-24 h-24 rounded-full border-4 border-blue-500 object-cover cursor-pointer">
+                    <input id="img-upload" name="photo" type="file" accept="image/*" class="hidden">
+                    <button type="button" onclick="document.getElementById('img-upload').click();"
+                            class="px-2 py-2 text-white rounded">
+                        <span class="text-black border rounded-lg border-black shadow material-symbols-outlined">upgrade</span>
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-white rounded">
+                        <span class="text-black border rounded-lg border-black shadow material-symbols-outlined">save</span>
+                    </button>
+                </form>
+                <div class="flex-1">
+                    <!-- Username Update Section -->
+                    <div class="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-200">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <h4 class="text-lg font-semibold text-gray-800">Account Information</h4>
+                        </div>
+
+                        <form method="POST" action="{% url 'update_username' %}" class="space-y-4">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                                <div class="md:col-span-2">
+                                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                        </svg>
+                                        Username
+                                    </label>
+                                    <div class="relative">
+                                        <input
+                                                id="username"
+                                                type="text"
+                                                name="username"
+                                                value="{{ user.username }}"
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white shadow-sm"
+                                                placeholder="Enter your username"
+                                                required>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                            type="submit"
+                                            class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                        </svg>
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+
+                            {% if error %}
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-red-700 text-sm font-medium">{{ error }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+
+                    <!-- User Info Display -->
+                    <div class="space-y-3">
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                            </svg>
+                            {% if user.email %}
+                                <span class="font-medium">{{ user.email }}</span>
+                            {% else %}
+                                <span class="font-medium">None</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center text-gray-500">
+                            <span class="material-symbols-outlined">calendar_today</span>
+                            <span class="text-sm">Joined: {{ user.date_joined|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section Header -->
+            <div class="flex items-center mb-6 mt-8">
+                <svg class="w-6 h-6 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <h3 class="text-2xl font-bold text-gray-800">My Reviews</h3>
+                <span class="ml-3 bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">{{ posts.count }}</span>
+            </div>
+
+            {% if posts %}
+                <div class="space-y-4">
+                    {% for post in posts %}
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-sm review-box-{{ post.id }}" data-review-id="{{ post.id }}">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex-1">
+                                    <h4 class="text-lg font-medium text-gray-800 mb-1">Title : {{ post.title }}</h4>
+                                    <div class="flex items-center">
+                                        <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold review-rating review-rating-{{ post.id }}">Rating : {{ post.rating }}/5</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3 min-h-[42px]">
+                                    <a style="font-family: 'Bungee', sans-serif ;"
+                                       href="{% url 'extra_details' post.game.slug %}"
+                                       class="text-blue-500 hover:text-blue-600 px-2 py-1 border border-blue-300 rounded-xl transition-colors font-extrabold text-lg bg-white hover:bg-blue-100 duration-200 shadow-sm">
+                                        {{ post.game.title }}
+                                    </a>
+                                    <!-- Action Buttons -->
+                                    <div class="flex space-x-2 items-center min-h-[40px]">
+                                        <button type="button" onclick="toggleEditForm({{post.id}})"
+                                                class="material-symbols-outlined px-3 py-2 rounded-lg border border-blue-300 hover:bg-blue-100 hover:text-blue-600 cursor-pointer transition-all duration-200 text-blue-500 flex items-center">
+                                            edit
+                                        </button>
+                                        <!-- Delete Form -->
+                                        <form method="POST" action="{% url 'delete_review' post.id %}"
+                                              style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit"
+                                                    onclick="return confirm('Are you sure you want to delete this review?')"
+                                                    class="material-symbols-outlined px-3 py-2 rounded-lg border border-red-300 hover:bg-red-100 hover:text-red-600 cursor-pointer transition-all duration-200 text-red-500 flex items-center">
+                                                delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <p class="text-black font-semibold" > Description :  </p>
+                            <div class="text-gray-700 leading-relaxed review-description-{{ post.id }}">{{ post.description|linebreaks }}</div>
+
+                            <!-- Like Button ve Last Updated (extra_details ile aynı davranış) -->
+                            <div class="flex justify-between items-center mt-4">
+                            <div class="flex items-center">
+                            {% if user.is_authenticated %}
+                            <form method="POST" action="{% url 'toggle_like' post.id %}" class="like-form" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button type="submit"
+                                    class="like-button flex items-center px-3 py-1.5 rounded-lg transition-all duration-200
+                                        {% if post.user_has_liked %} bg-red-100 text-red-600 hover:bg-red-200 {% else %}
+                                        bg-gray-100 text-gray-600 hover:bg-gray-200 {% endif %}"
+                                    data-post-id="{{ post.id }}">
+                            <svg class="w-4 h-4 mr-1"
+                                fill="{% if post.user_has_liked %}currentColor{% else %}none{% endif %}"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span class="text-sm font-medium like-count">{{ post.like_count|default:post.likes.count }}</span>
+                            </button>
+                        </form>
+                        {% else %}
+                        <!-- misafir görünümü aynı kalabilir -->
+                        {% endif %}
+                            </div>
+
+                            <!-- JS güncellemesi için data-attrib ekledim -->
+                            <div class="text-xs text-gray-500" data-updated-at>
+                                {{ post.updated_at|date:"M d, Y \\a\\t H:i" }}
+                            </div>
+                            </div>
+                            
+                            <div id="edit-form-{{ post.id }}" class="hidden mt-4 p-4 bg-white border-2 border-blue-200 rounded-lg shadow-sm">
+                                <form method="POST" action="{% url 'update_review' post.id %}" class="space-y-4">
+                                    {% csrf_token %}
+                                    
+                                    {% if messages %}
+                                        <div class="mb-4">
+                                            {% for message in messages %}
+                                                <div class="p-2 rounded text-white mb-2 {% if message.tags == 'error' %}bg-red-500{% elif message.tags == 'success' %}bg-green-500{% else %}bg-blue-500{% endif %}">
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- Title Field -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <svg class="w-4 h-4 inline mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                Review Title
+                                            </label>
+                                            <input type="text" name="title" value="{{ post.title }}" 
+                                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" 
+                                                   placeholder="Enter review title" required>
+                                        </div>
+                                        
+                                        <!-- Rating Field -->
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <svg class="w-4 h-4 inline mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                </svg>
+                                                Rating
+                                            </label>
+                                            <select name="rating" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" required>
+                                                {% for i in "12345" %}
+                                                    <option value="{{ forloop.counter }}" {% if post.rating == forloop.counter %}selected{% endif %}>
+                                                        {{ forloop.counter }} Star{{ forloop.counter|pluralize }} ⭐
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Description Field -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <svg class="w-4 h-4 inline mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                                            </svg>
+                                            Review Description
+                                        </label>
+                                        <textarea name="description" rows="3" 
+                                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 resize-none" 
+                                                  placeholder="Write your review..." required>{{ post.description }}</textarea>
+                                    </div>
+                                    
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="flex justify-end space-x-3 pt-2">
+                                        <button type="button" onclick="toggleEditForm({{ post.id }})" 
+                                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all duration-200 font-medium">
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Cancel
+                                        </button>
+                                        <button type="submit" 
+                                                class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg">
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500">You haven't made any reviews yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+
+{% endblock asd %}
+    <script src="{% static 'js/ProfilePhoto.js' %}"></script>
