@@ -13,8 +13,6 @@ class Genre(models.Model):
     name = models.CharField(max_length=100, unique=True) 
     slug = models.SlugField(null=True, blank=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-
     class Meta:
         ordering = ['name']
 
@@ -54,12 +52,11 @@ class Game(models.Model):
     genres = models.ManyToManyField(Genre, related_name="games", blank=True)
     platform = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         ordering = ['-id'] 
         indexes = [
-            models.Index(fields=['is_home']),
+            models.Index(fields=['is_home']), # Index for faster filtering
         ]
 
     def __str__(self):
@@ -131,8 +128,7 @@ class UserProfile(models.Model):
         help_text="Profile picture"
     )
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-
+    
     class Meta:
         ordering = ['-id'] 
 
@@ -149,10 +145,10 @@ class Like(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name="likes")
 
     class Meta:
-        unique_together = ('user','post') #both should be a unique
+        unique_together = ('user','post') # Both user and post should be unique together
         ordering = ['-id']
 
-#user oluşturmak için sinyal yollu bir fonksiyon tanımladım
+# Function to send a signal for creating a user profile
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """Automatically create user profile when user is created."""

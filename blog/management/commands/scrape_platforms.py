@@ -9,11 +9,19 @@ class Command(BaseCommand):
     help = 'Scrape GameSpot platforms for games'
     
     def add_arguments(self, parser):
+
+        parser.add_argument('--all', type=int, help='All games to scrape')        
         parser.add_argument('--game-id', type=int, help='Specific game ID to scrape')
         parser.add_argument('--game-title', type=str, help='Specific game title to scrape')
         
     def handle(self, *args, **options):
         scraper = GameSpotScrapper()
+
+        if options['all']:
+            games = Game.objects.all()
+            for game in games:
+                self.scrape_platform(scraper,game)
+
 
         if options['game_id']:
             try:

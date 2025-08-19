@@ -1,21 +1,24 @@
+import os
 import requests
 from .models import Game
 
 class RAWGAPIClient:
     def __init__(self):
         
-        self.api_key = "526549ab6f07446f8e785153b4809445"
+        RAWG_API_KEY = os.getenv('RAWG_API_KEY')
+        self.api_key = RAWG_API_KEY
         self.base_url = "https://api.rawg.io/api"
     
     def search_game(self, game_name):
-        """Oyun ara ve ilk sonucu döndür"""
-        url = f"{self.base_url}/games"
+        """Search for a game and return the first result"""
+
+        url = f"{self.base_url}/games" 
         params = {
             'search': game_name,
             'page_size': 1
         }
         
-        # Add API key if available
+    # Add API key if available
         if self.api_key:
             params['key'] = self.api_key
         
@@ -32,14 +35,14 @@ class RAWGAPIClient:
             return None
     
     def update_game_image_url(self, game_instance, game_name=None):
-        """Oyunun img alanını RAWG API'dan gelen fotoğraf linki ile güncelle"""
+        """Update the game's img field with the photo link from the RAWG API"""
         search_name = game_name or game_instance.title
         rawg_game = self.search_game(search_name)
         
         if not rawg_game or not rawg_game.get('background_image'):
             return False
         
-        # img alanını API'dan gelen link ile güncelle
+        # Update the img field with the link from the API
         game_instance.img = rawg_game['background_image']
         game_instance.save()
         

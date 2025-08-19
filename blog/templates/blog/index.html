@@ -5,7 +5,7 @@
 {% block asd %}
     <div class="py-10 pb-20">
         <div class="max-w-7xl mx-auto px-4">
-            {% include 'partials/_recentAdded.html' %}
+            {% include 'partials/_recentAdded.html' with games=recent_games %}
             <div class="my-16"></div>
             {% include 'partials/_mostReview.html' %}
         </div>

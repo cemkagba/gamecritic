@@ -16,27 +16,23 @@ class IndexView(View):
 
     def get(self, request):
         games = Game.objects.filter(is_home=True).order_by('-created_at')
-        
         review_game = Game.objects.annotate(review_count=Count('posts')).order_by('-review_count')[:5]
-        
         page_number = request.GET.get('page', 1)
+        
         paginator = Paginator(games, 5)
-        paginator2 = Paginator(review_game, 5)
-
 
         try:
             page_obj = paginator.page(page_number)
-            
         except:
             page_obj = paginator.page(1)
-        
+
+        # Son eklenen 10 oyunu çek
+        recent_games = Game.objects.order_by('-created_at')[:5]
 
         context = {
             'games': page_obj,
-            'page_obj': page_obj,
-            'paginator': paginator,
-            'paginator2': paginator2,
-            'page_obj2': review_game,
+            'reviewed_games': review_game,
+            'recent_games': recent_games,
         }
         return render(request, 'blog/index.html', context)
 
@@ -104,7 +100,7 @@ class AllGamesView(View):
         except:
             page_obj = paginator.page(1)
 
-        # Tüm platformları tek tek ayırıp, set ile benzersizleştir
+    # Split all platforms and collect unique values
         all_platforms = set()
         for game in Game.objects.values_list('platform', flat=True):
             if game:
@@ -193,6 +189,7 @@ class GameDetailView(View):
         else:
             for post in posts_list:
                 post.user_has_liked = False
+        
 
         context = {
             'game': game,
@@ -215,13 +212,13 @@ class GameDetailView(View):
         try:
             videos_updated = False
             
-            # Sadece daha önce hiç aranmamış (None) video ID'ler için API çağrısı yap
+            # Only call the API for video IDs that have never been searched (None)
             if game.trailer_video_id is None:
                 trailer_videos = search_trailer(game.title, max_result=1)
                 if trailer_videos:
                     game.trailer_video_id = trailer_videos[0]['video_id']
                 else:
-                    # Video bulunamadığını işaretlemek için boş string kullan
+                    # Use an empty string to indicate that no video was found
                     game.trailer_video_id = ''
                 videos_updated = True
             
