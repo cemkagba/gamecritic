@@ -1,13 +1,14 @@
+
 from googleapiclient.discovery import build
+import os
 
-
-YOUTUBE_API_KEY = 'AIzaSyAwrgomI9T2pXRZdX6srFfQUSTD1y2CEd8'
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 
 def search_trailer(querry,max_result=1):
     youtube = build('youtube','v3',developerKey=YOUTUBE_API_KEY)
 
     request = youtube.search().list(
-        q=f"{querry} trailer",
+        q=f"{querry} official trailer",
         part='snippet',
         type='video',
         maxResults=max_result

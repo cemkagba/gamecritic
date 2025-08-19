@@ -10,90 +10,106 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 
-# Videoların idleri yputube tarafından başka sitelerde gösterilmemesi için buglı veya direkt engelli olabiliyor o durum düzeltilebilir.
-
 class MetacriticScraper:
     SEARCH_URL = "https://www.metacritic.com/game"
 
-    HEADERS = {
-        "User-Agent": (
-            "Chrome/120.0.0.0 Safari/537.36 OPR/106.0.0.0"
-        ),
-        "Accept-Language": "en-US,en;q=0.9",
-    }
-
     def __init__(self):
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless') 
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
-        
+        options.add_argument('--headless=new')          # Run Chrome in headless mode
+        options.add_argument('--no-sandbox')            # Bypass OS security model
+        options.add_argument('--disable-dev-shm-usage') # Overcome limited resource problems
+        options.add_argument('--window-size=1920,1080') # Set fixed window size
+        options.add_argument('--disable-blink-features=AutomationControlled') # Reduce bot detection
+        options.add_argument(
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        )
         self.driver = webdriver.Chrome(options=options)
-    
-    def search_game(self, game_title):
+
+    def close(self):
+        """Close the Selenium WebDriver properly."""
         try:
+            self.driver.quit()
+        except Exception:
+            pass
+
+    def search_game(self, game_title):
+        """Search for a game on Metacritic and scrape its score and description."""
+        try:
+            # Convert game title into a slug for the URL
             title_slug = self.create_slug(game_title)
             search_url = f"https://www.metacritic.com/game/{title_slug}"
-            
-            print(f"🔍 Searched: {game_title}")
-            print(f"🌐 URL: {search_url}")
-            
-            self.driver.get(search_url)
-            
+            print(f" Searched: {game_title}")
+            print(f" URL: {search_url}")
 
+            # Open the game page
+            self.driver.get(search_url)
+
+            # Wait until title element is present
+            WebDriverWait(self.driver, 15).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="hero-title"] h1'))
+            )
+
+            # Try clicking the "Read More" button if it exists
             try:
-                read_more_button = WebDriverWait(self.driver, 10).until(
+                read_more_button = WebDriverWait(self.driver, 5).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.c-productDetails_readMore"))
                 )
                 self.driver.execute_script("arguments[0].click();", read_more_button)
                 print("Pressed read more button")
-                time.sleep(10)  
+                time.sleep(1.0)
             except (TimeoutException, NoSuchElementException):
                 print("There is no read more button")
-            
-           
+
+            # Get the title element
             title_element = self.driver.find_element(By.CSS_SELECTOR, '[data-testid="hero-title"] h1')
-            score_element = self.driver.find_element(By.CSS_SELECTOR, '.c-siteReviewScore_background-critic_medium span[data-v-e408cafe]')
-            
+
+            # Try to find the score element (different selectors may appear)
+            score_text = None
+            for sel in [
+                '.c-siteReviewScore_background-critic_medium span[data-v-e408cafe]',
+                '[data-testid="metascore"]'
+            ]:
+                try:
+                    score_element = self.driver.find_element(By.CSS_SELECTOR, sel)
+                    score_text = score_element.text.strip()
+                    if score_text:
+                        break
+                except NoSuchElementException:
+                    continue
+
+            # Try to extract the description
             try:
-                description_element = self.driver.find_element(By.CSS_SELECTOR, 'span.c-productionDetailsGame_description.g-text-xsmall')
+                description_element = self.driver.find_element(
+                    By.CSS_SELECTOR, 'span.c-productionDetailsGame_description.g-text-xsmall'
+                )
                 game_description = description_element.text.strip()
-                print(f"📝 Tam description alındı: {len(game_description)} karakter")
-                print(f"📝 İçerik: {game_description[:200]}...")
+                print(f" All description: {len(game_description)} characters")
+                print(f"Short Description: {game_description[:200]}...")
             except NoSuchElementException:
                 game_description = None
-                print("📝 Description bulunamadı")
-            
-            if title_element and score_element:
-                game_score = score_element.text.strip()
-                
+                print("Description not found")
+
+            # Return result
+            if title_element:
                 return {
                     'title': game_title,
-                    'score': int(game_score) if game_score.isdigit() else None,
+                    'score': int(score_text) if (score_text and score_text.isdigit()) else None,
                     'url': search_url,
                     'description': game_description,
                 }
-            
             return None
-            
+
         except Exception as e:
-            print(f"🚨 Hata: {e}")
+            print(f"🚨 Error: {e}")
             return None
-        finally:
-            self.driver.quit()
-    
 
     def create_slug(self, title):
-        """Oyun adını Metacritic slug formatına çevir"""
-        # Küçük harfe çevir
+        """Convert the game title into a Metacritic-friendly slug."""
         slug = title.lower()
-        # Özel karakterleri kaldır
-        slug = re.sub(r'[^\w\s-]', '', slug)
-        # Boşlukları tire ile değiştir
-        slug = re.sub(r'[-\s]+', '-', slug)
-        # Baştan ve sondan tireleri temizle
-        slug = slug.strip('-')
+        slug = re.sub(r'[^\w\s-]', '', slug)       # Remove special characters
+        slug = re.sub(r'[-\s]+', '-', slug)        # Replace spaces with hyphens
+        slug = slug.strip('-')                     # Trim hyphens at start and end
         return slug
 
 
