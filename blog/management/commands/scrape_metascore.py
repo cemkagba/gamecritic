@@ -50,7 +50,7 @@ class Command(BaseCommand):
                     "Please provide either --all, --game-id or --game-title"
                 ))
         finally:
-            scraper.close()
+            scraper.close() #start the driver for every time in all search
 
     def scrape_game_score(self, scraper, game):
         """Scrape score and description for a given game and save it to DB."""

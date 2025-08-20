@@ -12,7 +12,7 @@ class Genre(models.Model):
     """Game genre model."""
     name = models.CharField(max_length=100, unique=True) 
     slug = models.SlugField(null=True, blank=True, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True) #Automatically set the field to now when the object is created (creation timestamp)
     class Meta:
         ordering = ['name']
 

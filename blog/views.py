@@ -19,14 +19,14 @@ class IndexView(View):
         review_game = Game.objects.annotate(review_count=Count('posts')).order_by('-review_count')[:5]
         page_number = request.GET.get('page', 1)
         
+        # it has paginator but not used in this view for later updates 
         paginator = Paginator(games, 5)
-
         try:
             page_obj = paginator.page(page_number)
         except:
             page_obj = paginator.page(1)
 
-        # Son eklenen 10 oyunu çek
+        # Pull last created 5 game
         recent_games = Game.objects.order_by('-created_at')[:5]
 
         context = {
@@ -101,7 +101,7 @@ class AllGamesView(View):
             page_obj = paginator.page(1)
 
     # Split all platforms and collect unique values
-        all_platforms = set()
+        all_platforms = set() #unique set elements for every platform 
         for game in Game.objects.values_list('platform', flat=True):
             if game:
                 for p in game.split(','):
@@ -147,8 +147,13 @@ class AllGamesView(View):
             queryset = queryset.annotate(**sort_config['annotation']).filter(avg_rating__isnull = False)
             
             if sort_by == 'rating_desc':
+                # Order the queryset by 'avg_rating' in descending order,
+                # placing NULL values last
+                #F func for work with every database system and usage for desc and asc nulls_first etc
                 return queryset.order_by(F('avg_rating').desc(nulls_last=True))
             elif sort_by == 'rating_asc':
+                # Order the queryset by 'avg_rating' in ascending order,
+                # placing NULL values first
                 return queryset.order_by(F('avg_rating').asc(nulls_first=True))
 
         return queryset.order_by(sort_config['field'])

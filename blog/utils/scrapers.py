@@ -68,8 +68,8 @@ class MetacriticScraper:
             score_text = None
             for sel in [
                 '.c-siteReviewScore_background-critic_medium span[data-v-e408cafe]',
-                '[data-testid="metascore"]'
-            ]:
+                '[data-testid="metascore"]']:
+
                 try:
                     score_element = self.driver.find_element(By.CSS_SELECTOR, sel)
                     score_text = score_element.text.strip()
@@ -122,47 +122,48 @@ class GameSpotScrapper():
         "Accept-Language": "en-US,en;q=0.9",
     } 
 
-    def search_game(self,game_title):
+    def has_system_class(class_name):
+        return class_name and 'system' in class_name
 
-
+    def search_game(self, game_title):
         try:
             title_slug = self.create_slug(game_title)
-
             url = f"{self.SEARCH_URL}{title_slug}/"
-            print(f"🔍 GameSpot'ta platform aranıyor: {game_title}")
-            print(f"🌐 URL: {url}")
+            print(f"GameSpot'ta platform aranıyor: {game_title}")
+            print(f"URL: {url}")
 
-
-            response= requests.get(url,headers=self.HEADERS ,timeout=15)
+            response = requests.get(url, headers=self.HEADERS, timeout=15)
             response.raise_for_status()
-            soup = BeautifulSoup(response.content,"html.parser")
+            soup = BeautifulSoup(response.content, "html.parser")
 
             platforms = []
-
-            platform_list = soup.find('ul',class_='system-list')
+            platform_list = soup.find('ul', class_='system-list')
 
             if platform_list:
-                platform_items = platform_list.find_all('li',class_=lambda x:x and 'system' in x)
+                platform_items = platform_list.find_all('li', class_=self.has_system_class)
 
                 for item in platform_items:
-                    platform_span = item.find('span' , itemprop="device")
+                    platform_span = item.find('span', itemprop="device")
                     if platform_span:
                         platform_name = platform_span.text.strip()
                         platforms.append(platform_name)
-                print(f"Platform name added")
-                return{
-                    'platforms' : platforms,
+
+                print("Platform name(s) added")
+                return {
+                    'platforms': platforms,
                     'url': url,
                 }
             else:
-                print("There is no platform name")
+                print("No platform names found")
                 return None
+
         except requests.exceptions.RequestException as e:
-            print(f"🚨 HTTP Hatası: {e}")
+            print(f"HTTP Error: {e}")
             return None
         except Exception as e:
-            print(f"🚨 Genel Hata: {e}")
+            print(f"General Error: {e}")
             return None
+
         
     def create_slug(self, title):
         """Oyun adını Metacritic slug formatına çevir"""
@@ -175,9 +176,3 @@ class GameSpotScrapper():
         # Baştan ve sondan tireleri temizle
         slug = slug.strip('-')
         return slug
-
-
-
-
-
-    

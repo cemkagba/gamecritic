@@ -5,7 +5,20 @@
 {% block asd %}
     <div class="py-10 pb-20">
     
-        <div class="max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6">
+                <div class="max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6">
+                        {% if messages %}
+                            <div class="mb-4">
+                                {% for message in messages %}
+                                    <div class="p-2 rounded text-white mb-2
+                                        {% if message.tags == 'error' %}bg-red-500
+                                        {% elif message.tags == 'success' %}bg-green-500
+                                        {% elif message.tags == 'info' %}bg-blue-500
+                                        {% else %}bg-gray-500{% endif %}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
             <!-- Kullanıcı Bilgileri -->
             <div class="flex items-center space-x-6 mb-8">
                 <!-- Profil Fotoğrafı Formu -->

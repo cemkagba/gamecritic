@@ -71,9 +71,9 @@ class Command(BaseCommand):
         total = games.count()
         success_count = 0
         
-        self.stdout.write(f"🚀 Starting to fetch images for {total} games...")
+        self.stdout.write(f"Starting to fetch images for {total} games...")
         
-        for i, game in enumerate(games, 1):
+        for i, game in enumerate(games, 1): #enumerate for iterate i and game at the same time
             self.stdout.write(f"[{i}/{total}] Processing: {game.title}")
             
             if self.fetch_game_image(client, game):
@@ -81,7 +81,7 @@ class Command(BaseCommand):
         
         self.stdout.write(
             self.style.SUCCESS(
-                f"✅ Completed! {success_count}/{total} games updated with cover images."
+                f" Completed! {success_count}/{total} games updated with cover images."
             )
         )
 
@@ -89,7 +89,7 @@ class Command(BaseCommand):
         """Tek oyun için kapak fotoğrafı çek"""
         search_name = search_term or game.title
         
-        self.stdout.write(f"🔍 Searching: {search_name}")
+        self.stdout.write(f" Searching: {search_name}")
         
         # Eğer zaten RAWG API'den fotoğraf varsa atla
         if game.img:
@@ -102,12 +102,12 @@ class Command(BaseCommand):
         
         if success:
             self.stdout.write(
-                self.style.SUCCESS(f"✅ {game.title}: Image updated")
+                self.style.SUCCESS(f" {game.title}: Image updated")
             )
-            self.stdout.write(f"   📷 URL: {game.img}")
+            self.stdout.write(f" URL: {game.img}")
             return True
         else:
             self.stdout.write(
-                self.style.WARNING(f"❌ {game.title}: No image found")
+                self.style.WARNING(f" {game.title}: No image found")
             )
             return False

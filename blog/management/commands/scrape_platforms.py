@@ -37,7 +37,7 @@ class Command(BaseCommand):
             try:
                 # Case-insensitive arama
                 game = Game.objects.get(title__iexact=options['game_title'])
-                self.scrape_platform(scraper, game)  # ✅ Doğru method adı
+                self.scrape_platform(scraper, game) 
             except Game.DoesNotExist:
                 self.stderr.write(self.style.ERROR(
                     f"Game with title='{options['game_title']}' not found."
@@ -64,7 +64,7 @@ class Command(BaseCommand):
             return
 
     def scrape_platform(self, scraper, game):
-        self.stdout.write(f"🔍 Scraping: {game.title}")
+        self.stdout.write(f" Scraping: {game.title}")
         result = scraper.search_game(game.title)
 
         if result and result.get('platforms'):
@@ -73,9 +73,9 @@ class Command(BaseCommand):
             game.platform = platforms_str
             game.save()
             self.stdout.write(
-                self.style.SUCCESS(f"✅ {game.title}: {platforms_str} saved")
+                self.style.SUCCESS(f" {game.title}: {platforms_str} saved")
             )
         else:
             self.stdout.write(
-                self.style.WARNING(f"❌ {game.title}: No platform found")
+                self.style.WARNING(f" {game.title}: No platform found")
             )

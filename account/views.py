@@ -98,10 +98,10 @@ class ProfileView(LoginRequiredMixin, View):
                 .order_by('-id')
         )
 
-    # Which posts has this user liked? (single query)
+    # Which posts has this user liked?
         liked_ids = set(
             Like.objects.filter(user=request.user, post__in=posts)
-                        .values_list('post_id', flat=True)
+                        .values_list('post_id', flat=True) #flat=true for later changes default not changeble
         )
         for p in posts:
             p.user_has_liked = p.id in liked_ids
@@ -155,7 +155,9 @@ class UpdateReviewView(LoginRequiredMixin, View):
                 messages.success(request, msg)
                 return redirect('profile')
         else:
-            errors = {field: [str(e) for e in errs] for field, errs in form.errors.items()}
+            # Collect all form errors as a dictionary, converting each error to a string.
+            # This is useful for returning errors in a JSON response (e.g., for AJAX requests).
+            errors = {field: [str(e) for e in errs] for field, errs in form.errors.items()} 
             if is_ajax:
                 return JsonResponse({'success': False, 'errors': errors})
             else:
@@ -174,15 +176,12 @@ class UpdateUsernameView(LoginRequiredMixin, View):
         current_username = request.user.username
 
     # Validation
-        if not new_username:
-            messages.error(request, "Username cannot be empty.")
-            return redirect('profile')
-
+        
         if new_username == current_username:
             messages.info(request, "Username is already the same.")
             return redirect('profile')
 
-        if User.objects.filter(username=new_username).exists():
+        elif User.objects.filter(username=new_username).exists():
             messages.error(request, 'This username is already taken!')
             return redirect('profile')
 
