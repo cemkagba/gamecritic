@@ -24,7 +24,7 @@
         </div>
     </div>
     <div id="game-slider" class="flex overflow-x-auto gap-6 scroll-smooth pb-4 w-full max-w-full" style="scroll-snap-type: x mandatory;">
-        {% for game in games %}
+        {% for game in recent_games %}
             <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow flex-shrink-0" style="width: 23vw; min-width: 320px; max-width: 350px; min-height: 420px; scroll-snap-align: start;">
                 <a href="{% url 'extra_details' game.slug %}">
                     {% if game.img %}

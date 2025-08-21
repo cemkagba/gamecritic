@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+node_modules
+.env
+docker-compose.yml
+django.log
+=======
+# Ignore environment variables file
+.env
+>>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
 node_modules
 .env
 docker-compose.yml

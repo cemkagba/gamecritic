@@ -94,11 +94,11 @@ class ProfileView(LoginRequiredMixin, View):
         posts = (
             Post.objects
                 .filter(creator=request.user)
-                .annotate(like_count=Count('likes'))   # like sayısı
+                .annotate(like_count=Count('likes'))   # number of likes
                 .order_by('-id')
         )
 
-        # Bu kullanıcı hangi postları like’lamış? (tek sorgu)
+    # Which posts has this user liked? (single query)
         liked_ids = set(
             Like.objects.filter(user=request.user, post__in=posts)
                         .values_list('post_id', flat=True)
@@ -173,7 +173,7 @@ class UpdateUsernameView(LoginRequiredMixin, View):
         new_username = request.POST.get('username', '').strip()
         current_username = request.user.username
 
-        # Validation
+    # Validation
         if not new_username:
             messages.error(request, "Username cannot be empty.")
             return redirect('profile')
