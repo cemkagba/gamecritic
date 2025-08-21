@@ -100,11 +100,7 @@ class AllGamesView(View):
         except:
             page_obj = paginator.page(1)
 
-<<<<<<< HEAD
-    # Split all platforms one by one and make them unique with set
-=======
     # Split all platforms and collect unique values
->>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
         all_platforms = set()
         for game in Game.objects.values_list('platform', flat=True):
             if game:
@@ -215,24 +211,14 @@ class GameDetailView(View):
         """
         try:
             videos_updated = False
-<<<<<<< HEAD
-
-            # TRAILER
-=======
-            
             # Only call the API for video IDs that have never been searched (None)
->>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
             if game.trailer_video_id is None:
                 result = search_trailer(game.title, max_result=1)
                 if result:
                     game.trailer_video_id = result["video_id"]  # only the ID
                 else:
-<<<<<<< HEAD
-                    game.trailer_video_id = ''                  # no result found
-=======
                     # Use an empty string to indicate that no video was found
                     game.trailer_video_id = ''
->>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
                 videos_updated = True
 
             # REVIEW
