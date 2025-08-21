@@ -84,15 +84,15 @@
                         <div class="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-shadow">
                             <a href="{% url 'extra_details' game.slug %}">
                                 {% if game.img %}
-                                    <!-- RAWG API'den gelen kapak fotoğrafını öncelikle göster -->
+                                    <!-- Show cover photo from RAWG API first -->
                                     <img src="{{ game.img }}" alt="{{ game.title }}"
                                          class="rounded-md h-48 w-full object-cover mb-3">
                                 {% elif game.image %}
-                                    <!-- Admin panelinden yüklenen fotoğrafı göster -->
+                                    <!-- Show uploaded photo from admin panel -->
                                     <img src="{{ game.image.url }}" alt="{{ game.title }}"
                                          class="rounded-md h-48 w-full object-cover mb-3">
                                 {% else %}
-                                    <!-- Hiç fotoğraf yoksa placeholder göster -->
+                                    <!-- If there are no photos, show placeholder-->
                                     <div class="rounded-md h-48 w-full bg-gray-200 flex items-center justify-center mb-3">
                                         <span class="text-gray-500 text-sm">No Image</span>
                                     </div>

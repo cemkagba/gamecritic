@@ -104,7 +104,7 @@ class AllGamesView(View):
         except:
             page_obj = paginator.page(1)
 
-        # Tüm platformları tek tek ayırıp, set ile benzersizleştir
+    # Split all platforms one by one and make them unique with set
         all_platforms = set()
         for game in Game.objects.values_list('platform', flat=True):
             if game:
@@ -214,46 +214,48 @@ class GameDetailView(View):
         """
         try:
             videos_updated = False
-            
-            # Sadece daha önce hiç aranmamış (None) video ID'ler için API çağrısı yap
+
+            # TRAILER
             if game.trailer_video_id is None:
-                trailer_videos = search_trailer(game.title, max_result=1)
-                if trailer_videos:
-                    game.trailer_video_id = trailer_videos[0]['video_id']
+                result = search_trailer(game.title, max_result=1)
+                if result:
+                    game.trailer_video_id = result["video_id"]  # only the ID
                 else:
-                    # Video bulunamadığını işaretlemek için boş string kullan
-                    game.trailer_video_id = ''
+                    game.trailer_video_id = ''                  # no result found
                 videos_updated = True
-            
+
+            # REVIEW
             if game.review_video_id is None:
-                review_videos = search_review(game.title, max_result=1)
-                if review_videos:
-                    game.review_video_id = review_videos[0]['video_id']
+                result = search_review(game.title, max_result=1)
+                if result:
+                    game.review_video_id = result["video_id"]
                 else:
                     game.review_video_id = ''
                 videos_updated = True
-            
+
+            # GAMEPLAY
             if game.gameplay_video_id is None:
-                gameplay_videos = search_gameplay(game.title, max_result=1)
-                if gameplay_videos:
-                    game.gameplay_video_id = gameplay_videos[0]['video_id']
+                result = search_gameplay(game.title, max_result=1)
+                if result:
+                    game.gameplay_video_id = result["video_id"]
                 else:
                     game.gameplay_video_id = ''
                 videos_updated = True
 
+            # TIPS
             if game.tips_video_id is None:
-                tips_videos = search_tips(game.title, max_result=1)
-                if tips_videos:
-                    game.tips_video_id = tips_videos[0]['video_id']
+                result = search_tips(game.title, max_result=1)
+                if result:
+                    game.tips_video_id = result["video_id"]
                 else:
                     game.tips_video_id = ''
                 videos_updated = True
-            
+
             if videos_updated:
                 game.save()
-                
+
         except Exception as e:
-            # Log the error if needed, but don't break the page
+            # Log the error in production; do not break the page
             print(f"Error searching videos for {game.title}: {e}")
             pass
 

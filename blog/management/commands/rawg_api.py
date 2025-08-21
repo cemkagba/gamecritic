@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 self.stderr.write(self.style.ERROR(
                     f"Game with title='{options['game_title']}' not found."
                 ))
-                # Benzer başlıkları öner
+                # Recommend familiar titles
                 similar_games = Game.objects.filter(title__icontains=options['game_title'])[:5]
                 if similar_games:
                     self.stdout.write("Similar games found:")
@@ -66,12 +66,12 @@ class Command(BaseCommand):
             return
 
     def fetch_all_images(self, client):
-        """Tüm oyunlar için kapak fotoğrafı çek"""
+        """Fetch game photos for all games"""
         games = Game.objects.all()
         total = games.count()
         success_count = 0
         
-        self.stdout.write(f"🚀 Starting to fetch images for {total} games...")
+        self.stdout.write(f"Starting to fetch images for {total} games...")
         
         for i, game in enumerate(games, 1):
             self.stdout.write(f"[{i}/{total}] Processing: {game.title}")
@@ -81,17 +81,17 @@ class Command(BaseCommand):
         
         self.stdout.write(
             self.style.SUCCESS(
-                f"✅ Completed! {success_count}/{total} games updated with cover images."
+                f"Completed! {success_count}/{total} games updated with cover images."
             )
         )
 
     def fetch_game_image(self, client, game, search_term=None):
-        """Tek oyun için kapak fotoğrafı çek"""
+        """Fetch game photo for single game"""
         search_name = search_term or game.title
         
-        self.stdout.write(f"🔍 Searching: {search_name}")
+        self.stdout.write(f"Searching: {search_name}")
         
-        # Eğer zaten RAWG API'den fotoğraf varsa atla
+        # If it already exist in database pass
         if game.img:
             self.stdout.write(
                 self.style.WARNING(f"{game.title}: Already has RAWG image, skipping...")
@@ -102,12 +102,12 @@ class Command(BaseCommand):
         
         if success:
             self.stdout.write(
-                self.style.SUCCESS(f"✅ {game.title}: Image updated")
+                self.style.SUCCESS(f"{game.title}: Image updated")
             )
-            self.stdout.write(f"   📷 URL: {game.img}")
+            self.stdout.write(f"URL: {game.img}")
             return True
         else:
             self.stdout.write(
-                self.style.WARNING(f"❌ {game.title}: No image found")
+                self.style.WARNING(f"{game.title}: No image found")
             )
             return False

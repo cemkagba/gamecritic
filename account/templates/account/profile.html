@@ -6,9 +6,9 @@
     <div class="py-10 pb-20">
     
         <div class="max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6">
-            <!-- Kullanıcı Bilgileri -->
+            <!-- User Info -->
             <div class="flex items-center space-x-6 mb-8">
-                <!-- Profil Fotoğrafı Formu -->
+                <!-- Profile Edit Form -->
                 <form method="POST" action="{% url 'update_photo' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <img id="profile-img"
@@ -187,11 +187,11 @@
                             </button>
                         </form>
                         {% else %}
-                        <!-- misafir görünümü aynı kalabilir -->
+                        <!--  -->
                         {% endif %}
                             </div>
 
-                            <!-- JS güncellemesi için data-attrib ekledim -->
+                            <!-- I added data-attrib for JS update -->
                             <div class="text-xs text-gray-500" data-updated-at>
                                 {{ post.updated_at|date:"M d, Y \\a\\t H:i" }}
                             </div>

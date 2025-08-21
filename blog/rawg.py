@@ -8,7 +8,7 @@ class RAWGAPIClient:
         self.base_url = "https://api.rawg.io/api"
     
     def search_game(self, game_name):
-        """Oyun ara ve ilk sonucu döndür"""
+        """Search for game and return first result"""
         url = f"{self.base_url}/games"
         params = {
             'search': game_name,
@@ -32,14 +32,14 @@ class RAWGAPIClient:
             return None
     
     def update_game_image_url(self, game_instance, game_name=None):
-        """Oyunun img alanını RAWG API'dan gelen fotoğraf linki ile güncelle"""
+        """Update the game's img indicator with the image link from the RAWG API"""
         search_name = game_name or game_instance.title
         rawg_game = self.search_game(search_name)
         
         if not rawg_game or not rawg_game.get('background_image'):
             return False
         
-        # img alanını API'dan gelen link ile güncelle
+        # Update the img field with the link from the API
         game_instance.img = rawg_game['background_image']
         game_instance.save()
         

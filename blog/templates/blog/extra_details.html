@@ -72,15 +72,15 @@
                         </iframe>
                     {% else %}
                         {% if game.img %}
-                            <!-- RAWG API'den gelen kapak fotoğrafını öncelikle göster -->
+                            <!-- Show cover photo from RAWG API first -->
                             <img class="rounded-3xl w-full h-full object-cover" alt="{{ game.title }}"
                                  src="{{ game.img }}">
                         {% elif game.image %}
-                            <!-- Admin panelinden yüklenen fotoğrafı göster -->
+                            <!-- Show uploaded photo from admin panel -->
                             <img class="rounded-3xl w-full h-full object-cover" alt="{{ game.title }}"
                                  src="{{ game.image.url }}">
                         {% else %}
-                            <!-- Hiç fotoğraf yoksa placeholder göster -->
+                            <!-- If there are no photos, show placeholder -->
                             <div class="rounded-3xl w-full h-full bg-gray-200 flex items-center justify-center">
                                 <span class="text-gray-500 text-lg">No Image Available</span>
                             </div>
@@ -564,7 +564,7 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Yorum Alanı -->
+                            <!-- Comment Section -->
                             <div class="mb-4">
                                 <label for="{{ form.description.id_for_label }}"
                                        class="block mb-2 text-sm font-medium text-gray-900">Your Review:</label>

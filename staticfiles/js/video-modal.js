@@ -22,7 +22,7 @@ function closeVideoModal() {
     modal.classList.add('hidden');
 }
 
-// ESC tuşu ile kapat
+// Close with ESC key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeVideoModal();

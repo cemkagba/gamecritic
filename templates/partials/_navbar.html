@@ -14,12 +14,12 @@
                     </a>
                 </div>
                 <div class="hidden sm:ml-6 sm:flex flex-1 items-center">
-                    <!-- Sol linkler -->
+                    <!-- Left links -->
                     <div class="flex space-x-4 py-5">
                         <a href="{% url 'all_games' %}"
                            class="rounded-md px-3 py-2 text-xl font-medium text-gray-300 hover:bg-gray-700 hover:text-white">All Games</a>
                     </div>
-                    <!-- Sağ Linkler -->
+                    <!-- Right links -->
                     <div class="ml-auto flex space-x-4">
                         {% if user.is_authenticated %}
                             <a href="{% url 'logout' %}?next={{ request.path }}"

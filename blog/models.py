@@ -40,7 +40,7 @@ class Game(models.Model):
         help_text="Game trailer or gameplay video"
     )
     is_home = models.BooleanField(
-        default=False, 
+        default=True, 
         help_text="Display on homepage"
     )
     slug = models.SlugField(unique=True, blank=True)  

@@ -2,12 +2,6 @@
 from . import views
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .api_views import GameViewSet, GenreViewSet, PostViewSet
-
-router = DefaultRouter()
-router.register(r'games', GameViewSet, basename='games')
-router.register(r'genres', GenreViewSet, basename='genres')
-router.register(r'posts', PostViewSet, basename='posts')
 
 urlpatterns = [
     path("", views.IndexView.as_view(), name="home"),
