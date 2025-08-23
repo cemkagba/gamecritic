@@ -1,0 +1,35 @@
+
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: POSTGRES_DB
+      POSTGRES_USER: POSTGRES_USER
+      POSTGRES_PASSWORD: DB_PASSWORD
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  tailwind:
+    image: node:20
+    working_dir: /app/theme/static_src
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      - .:/app
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
