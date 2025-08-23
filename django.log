@@ -10105,3 +10105,36 @@ INFO 2025-08-22 14:45:30,326 basehttp 366 126416944359104 "GET /all-games/?page=
 INFO 2025-08-22 14:47:18,040 basehttp 366 126416944359104 "GET /all-games/?search=&genre=&platform=&sort=rating_asc HTTP/1.1" 200 24722
 INFO 2025-08-22 14:48:05,854 basehttp 366 126416944359104 "GET /details/red-dead-redemption-2/ HTTP/1.1" 200 47261
 INFO 2025-08-22 14:48:08,409 basehttp 366 126416944359104 "GET /details/red-dead-redemption-2/?sort=least_liked HTTP/1.1" 200 47261
+INFO 2025-08-23 10:57:20,003 autoreload 8 135118770527168 Watching for file changes with StatReloader
+INFO 2025-08-23 10:57:49,240 autoreload 8 135118770527168 /app/blog/youtube_api.py changed, reloading.
+INFO 2025-08-23 10:57:49,753 autoreload 10 137197763189696 Watching for file changes with StatReloader
+INFO 2025-08-23 10:57:57,379 autoreload 7 123383632628672 Watching for file changes with StatReloader
+INFO 2025-08-23 10:59:02,124 autoreload 7 123383632628672 /app/account/views.py changed, reloading.
+INFO 2025-08-23 10:59:02,701 autoreload 9 132389477030848 Watching for file changes with StatReloader
+INFO 2025-08-23 10:59:12,374 autoreload 9 132389477030848 /app/account/views.py changed, reloading.
+INFO 2025-08-23 10:59:12,935 autoreload 11 133425435556800 Watching for file changes with StatReloader
+INFO 2025-08-23 10:59:15,367 basehttp 11 133425331693248 "GET /details/red-dead-redemption-2/?sort=least_liked HTTP/1.1" 200 47261
+INFO 2025-08-23 10:59:15,393 basehttp 11 133425096812224 "GET /static/js/button.js HTTP/1.1" 304 0
+INFO 2025-08-23 10:59:15,400 basehttp 11 133425080026816 "GET /static/js/like-ajax.js HTTP/1.1" 304 0
+INFO 2025-08-23 10:59:15,401 basehttp 11 133425071634112 "GET /static/django-browser-reload/reload-listener.js HTTP/1.1" 304 0
+INFO 2025-08-23 10:59:15,403 basehttp 11 133425323300544 "GET /static/js/video-modal.js HTTP/1.1" 200 847
+INFO 2025-08-23 10:59:15,404 basehttp 11 133425088419520 "GET /static/js/review-ajax.js HTTP/1.1" 200 2949
+INFO 2025-08-23 10:59:15,406 basehttp 11 133425105204928 "GET /static/js/review-edit-toggle.js HTTP/1.1" 200 545
+INFO 2025-08-23 10:59:15,410 basehttp 11 133425331693248 "GET /static/css/styles.css HTTP/1.1" 200 43425
+WARNING 2025-08-23 10:59:15,458 basehttp 11 133425331693248 "GET /favicon.ico HTTP/1.1" 404 5089
+INFO 2025-08-23 10:59:18,437 autoreload 11 133425435556800 /app/account/views.py changed, reloading.
+INFO 2025-08-23 10:59:19,058 autoreload 21 135956454546368 Watching for file changes with StatReloader
+INFO 2025-08-23 10:59:19,996 basehttp 21 135956350887616 "GET /details/red-dead-redemption-2/?sort=least_liked HTTP/1.1" 200 47261
+INFO 2025-08-23 10:59:22,584 autoreload 21 135956454546368 /app/account/views.py changed, reloading.
+INFO 2025-08-23 10:59:23,158 autoreload 25 137641090067392 Watching for file changes with StatReloader
+INFO 2025-08-23 10:59:24,027 basehttp 25 137640986797760 "GET /details/red-dead-redemption-2/?sort=least_liked HTTP/1.1" 200 47261
+INFO 2025-08-23 10:59:28,703 basehttp 25 137640986797760 "GET /details/red-dead-redemption-2/?sort=least_liked HTTP/1.1" 200 47261
+INFO 2025-08-23 10:59:28,728 basehttp 25 137640986797760 "GET /static/js/review-ajax.js HTTP/1.1" 304 0
+WARNING 2025-08-23 10:59:28,776 basehttp 25 137640986797760 "GET /favicon.ico HTTP/1.1" 404 5089
+INFO 2025-08-23 10:59:29,641 basehttp 25 137640986797760 "GET / HTTP/1.1" 200 29974
+INFO 2025-08-23 10:59:30,168 basehttp 25 137640986797760 "GET /all-games/ HTTP/1.1" 200 41585
+INFO 2025-08-23 10:59:30,829 basehttp 25 137640986797760 "GET /details/uncharted-2-among-thieves/ HTTP/1.1" 200 47189
+INFO 2025-08-23 10:59:31,926 basehttp 25 137640986797760 "GET / HTTP/1.1" 200 29974
+INFO 2025-08-23 10:59:32,535 basehttp 25 137640986797760 "GET /account/profile HTTP/1.1" 200 52539
+INFO 2025-08-23 10:59:32,733 basehttp 25 137640978405056 "GET /media/blog/images/Ekran_g%C3%B6r%C3%BCnt%C3%BCs%C3%BC_2024-08-26_134137.png HTTP/1.1" 304 0
+INFO 2025-08-23 10:59:33,517 basehttp 25 137640986797760 "GET / HTTP/1.1" 200 29974

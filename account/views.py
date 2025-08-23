@@ -94,15 +94,13 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
         user_profile = self.get_or_create_profile()
-
         posts = (
             Post.objects
                 .filter(creator=request.user)
-                .annotate(like_count=Count('likes'))   
+                .annotate(like_count=Count('likes'))
                 .order_by('-id')
         )
-
-        # is liked by this user
+        # Which posts has this user liked? (single query)
         liked_ids = set(
             Like.objects.filter(user=request.user, post__in=posts)
                         .values_list('post_id', flat=True)
@@ -111,8 +109,8 @@ class ProfileView(LoginRequiredMixin, View):
             p.user_has_liked = p.id in liked_ids
 
         # Retrieve and remove any review message or errors from the session (for one-time display)
-        review_message = self.request.session.pop('review_message', None)
-        review_errors = self.request.session.pop('review_errors', None)
+        review_message = request.session.pop('review_message', None)
+        review_errors = request.session.pop('review_errors', None)
         context = {
             'form': ProfileForm(instance=user_profile),
             'update_form': ProfileUpdateForm(instance=request.user),
@@ -188,7 +186,7 @@ class UpdateUsernameView(LoginRequiredMixin, View):
         new_username = request.POST.get('username', '').strip()
         current_username = request.user.username
 
-        # Validation
+    # Validation
         if not new_username:
             messages.error(request, "Username cannot be empty.")
             return redirect('profile')

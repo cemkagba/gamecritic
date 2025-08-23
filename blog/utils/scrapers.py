@@ -39,8 +39,13 @@ class MetacriticScraper:
             # Convert game title into a slug for the URL
             title_slug = self.create_slug(game_title)
             search_url = f"https://www.metacritic.com/game/{title_slug}"
+<<<<<<< HEAD
             print(f"Searched: {game_title}")
             print(f"URL: {search_url}")
+=======
+            print(f" Searched: {game_title}")
+            print(f" URL: {search_url}")
+>>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
 
             # Open the game page
             self.driver.get(search_url)
@@ -59,7 +64,11 @@ class MetacriticScraper:
                 print("Pressed read more button")
                 time.sleep(1.0)
             except (TimeoutException, NoSuchElementException):
+<<<<<<< HEAD
                 print("No read more button")
+=======
+                print("There is no read more button")
+>>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
 
             # Get the title element
             title_element = self.driver.find_element(By.CSS_SELECTOR, '[data-testid="hero-title"] h1')
@@ -84,7 +93,11 @@ class MetacriticScraper:
                     By.CSS_SELECTOR, 'span.c-productionDetailsGame_description.g-text-xsmall'
                 )
                 game_description = description_element.text.strip()
+<<<<<<< HEAD
                 print(f"All description: {len(game_description)} characters")
+=======
+                print(f" All description: {len(game_description)} characters")
+>>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
                 print(f"Short Description: {game_description[:200]}...")
             except NoSuchElementException:
                 game_description = None
@@ -101,7 +114,11 @@ class MetacriticScraper:
             return None
 
         except Exception as e:
+<<<<<<< HEAD
             print(f"Error: {e}")
+=======
+            print(f"🚨 Error: {e}")
+>>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64
             return None
 
     def create_slug(self, title):

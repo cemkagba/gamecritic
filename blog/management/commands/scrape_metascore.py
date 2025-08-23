@@ -70,4 +70,8 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.WARNING(f" {game.title}: No score found")
+<<<<<<< HEAD
             )
+=======
+            )
+>>>>>>> 9d50b2831be56ef54576e484e5000b1b8993be64

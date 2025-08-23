@@ -1,11 +1,9 @@
 from googleapiclient.discovery import build
 import os
-
 from dotenv import load_dotenv
 load_dotenv()
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-
 
 def _pick_public_embeddable(video_ids):
     """Fetch video status with videos.list and return the first ID that is public + embeddable."""
@@ -18,9 +16,11 @@ def _pick_public_embeddable(video_ids):
         maxResults=len(video_ids)
     ).execute()
 
+
     for v in details.get("items", []):
         st = v.get("status", {})
         if st.get("privacyStatus") == "public" and st.get("embeddable", False):
+            
             return {
                 "title": v["snippet"]["title"],
                 "video_id": v["id"],

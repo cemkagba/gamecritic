@@ -16,26 +16,25 @@ class IndexView(View):
 
     def get(self, request):
         games = Game.objects.filter(is_home=True).order_by('-created_at')
-        
         review_game = Game.objects.annotate(review_count=Count('posts')).order_by('-review_count')[:5]
-        
         page_number = request.GET.get('page', 1)
+        
         paginator = Paginator(games, 5)
         paginator2 = Paginator(review_game, 5)
-        
+
+
         try:
             page_obj = paginator.page(page_number)
-            
         except:
             page_obj = paginator.page(1)
-        
+
+        # Son eklenen 10 oyunu çek
+        recent_games = Game.objects.order_by('-created_at')[:5]
 
         context = {
             'games': page_obj,
-            'page_obj': page_obj,
-            'paginator': paginator,
-            'paginator2': paginator2,
-            'page_obj2': review_game,
+            'reviewed_games': review_game,
+            'recent_games': recent_games,
         }
         return render(request, 'blog/index.html', context)
 
@@ -104,7 +103,7 @@ class AllGamesView(View):
         except:
             page_obj = paginator.page(1)
 
-    # Split all platforms one by one and make them unique with set
+    # Split all platforms and collect unique values
         all_platforms = set()
         for game in Game.objects.values_list('platform', flat=True):
             if game:
@@ -193,6 +192,7 @@ class GameDetailView(View):
         else:
             for post in posts_list:
                 post.user_has_liked = False
+        
 
         context = {
             'game': game,
@@ -214,14 +214,14 @@ class GameDetailView(View):
         """
         try:
             videos_updated = False
-
-            # TRAILER
+            # Only call the API for video IDs that have never been searched (None)
             if game.trailer_video_id is None:
                 result = search_trailer(game.title, max_result=1)
                 if result:
                     game.trailer_video_id = result["video_id"]  # only the ID
                 else:
-                    game.trailer_video_id = ''                  # no result found
+                    # Use an empty string to indicate that no video was found
+                    game.trailer_video_id = ''
                 videos_updated = True
 
             # REVIEW

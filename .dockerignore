@@ -63,3 +63,4 @@ htmlcov/
 # Local environment files
 .env
 .env.local
+django.log
