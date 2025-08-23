@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 self.scrape_platform(scraper,game)
 
 
-        if options['game_id']:
+        elif options['game_id']:
             try:
                 game = Game.objects.get(id=options['game_id'])
                 self.scrape_platform(scraper, game)
@@ -32,6 +32,7 @@ class Command(BaseCommand):
                     f"Game with id={options['game_id']} not found."
                 ))
                 return
+
 
         elif options['game_title']:
             try:

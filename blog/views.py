@@ -22,8 +22,7 @@ class IndexView(View):
         page_number = request.GET.get('page', 1)
         paginator = Paginator(games, 5)
         paginator2 = Paginator(review_game, 5)
-
-
+        
         try:
             page_obj = paginator.page(page_number)
             
@@ -85,12 +84,13 @@ class AllGamesView(View):
         games = Game.objects.all()
         games = self._apply_filters(games, request)
 
+        #disctinct = unique search 
+
         search_query = request.GET.get('search', '')
         if search_query:
             games = games.filter(
                 Q(title__icontains=search_query) | 
                 Q(platform__icontains=search_query) |
-                Q(description__icontains=search_query) |
                 Q(genres__name__icontains=search_query)
             ).distinct()
         
@@ -349,28 +349,18 @@ class DeleteReviewView(LoginRequiredMixin, View):
     login_url = 'login'
 
     def post(self, request, review_id):
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            try:
-                review = get_object_or_404(Post, id=review_id, creator=request.user)
-                review.delete()
-                return JsonResponse({'success': True, 'message': 'Review deleted successfully.'})
-            except Post.DoesNotExist:
-                return JsonResponse({'success': False, 'message': "Review not found or you don't have permission."})
-            except Exception:
-                return JsonResponse({'success': False, 'message': 'An error occurred while deleting the review.'})
-        else:
-            try:
-                review = get_object_or_404(Post, id=review_id, creator=request.user)
-                game_slug = review.game.slug
-                review.delete()
-                messages.success(request, "Review deleted successfully.")
-                return redirect('extra_details', slug=game_slug)
-            except Post.DoesNotExist:   
-                messages.error(request, "Review not found or you don't have permission")
-                return redirect('profile')
-            except Exception:
-                messages.error(request, 'An error occurred while deleting the review.')
-                return redirect('profile')
+        try:
+            review = get_object_or_404(Post, id=review_id, creator=request.user)
+            game_slug = review.game.slug
+            review.delete()
+            messages.success(request, "Review deleted successfully.")
+            return redirect('extra_details', slug=game_slug)
+        except Post.DoesNotExist:   
+            messages.error(request, "Review not found or you don't have permission")
+            return redirect('profile')
+        except Exception:
+            messages.error(request, 'An error occurred while deleting the review.')
+            return redirect('profile')
 
 
 class ToggleLikeView(LoginRequiredMixin, View):

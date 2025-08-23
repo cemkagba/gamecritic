@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.http import JsonResponse
-from .forms import ProfileForm, ProfileUpdateForm, LoginForm, RegisterForm, ReviewForm,ReviewForm
+from .forms import ProfileForm, ProfileUpdateForm, LoginForm, RegisterForm, ReviewForm
 from blog.models import UserProfile, Post,Like
 from django.utils.html import linebreaks
 from django.db.models import Count
@@ -34,6 +34,8 @@ class LoginView(View):
             return redirect("home")
         
         return render(request, "account/login.html", {'form': form})
+
+
 
 class RegisterView(View):
     """User registration view."""
@@ -69,6 +71,7 @@ class RegisterView(View):
         return render(request, "account/register.html", {'form': form})
 
 
+
 class LogoutView(View):
     """User logout view."""
 
@@ -76,6 +79,7 @@ class LogoutView(View):
         logout(request)
         messages.success(request, "You have been logged out successfully!")
         return redirect('home')
+
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -94,11 +98,11 @@ class ProfileView(LoginRequiredMixin, View):
         posts = (
             Post.objects
                 .filter(creator=request.user)
-                .annotate(like_count=Count('likes'))   # like sayısı
+                .annotate(like_count=Count('likes'))   
                 .order_by('-id')
         )
 
-        # Bu kullanıcı hangi postları like’lamış? (tek sorgu)
+        # is liked by this user
         liked_ids = set(
             Like.objects.filter(user=request.user, post__in=posts)
                         .values_list('post_id', flat=True)
@@ -106,13 +110,19 @@ class ProfileView(LoginRequiredMixin, View):
         for p in posts:
             p.user_has_liked = p.id in liked_ids
 
+        # Retrieve and remove any review message or errors from the session (for one-time display)
+        review_message = self.request.session.pop('review_message', None)
+        review_errors = self.request.session.pop('review_errors', None)
         context = {
             'form': ProfileForm(instance=user_profile),
             'update_form': ProfileUpdateForm(instance=request.user),
             'user': request.user,
             'posts': posts,
+            'review_message': review_message,
+            'review_errors': review_errors,
         }
         return render(request, 'account/profile.html', context)
+
 
 
 class UpdateReviewView(LoginRequiredMixin, View):
@@ -148,21 +158,26 @@ class UpdateReviewView(LoginRequiredMixin, View):
                     'title': saved_review.title,
                     'description': linebreaks(saved_review.description),
                     'rating': str(saved_review.rating),
-                    'updated_at': saved_review.updated_at.strftime('%b %d, %Y at %H:%M')
+                    'updated_at': saved_review.updated_at.strftime('%b %d, %Y')
                     }
                 })
             else:
-                messages.success(request, msg)
+                request.session['review_message'] = msg
                 return redirect('profile')
         else:
-            errors = {field: [str(e) for e in errs] for field, errs in form.errors.items()}
+            errors = {}
+            for field, errs in form.errors.items():
+                errors[field] = [str(e) for e in errs]
             if is_ajax:
                 return JsonResponse({'success': False, 'errors': errors})
             else:
+                errors = []
                 for field, errs in form.errors.items():
                     for error in errs:
-                        messages.error(request, f"{field.title()}: {error}")
+                        errors.append(f"{field.title()}: {error}")
+                request.session['review_errors'] = errors
                 return redirect('profile')
+
 
 
 class UpdateUsernameView(LoginRequiredMixin, View):
@@ -218,6 +233,7 @@ class UpdatePhotoView(LoginRequiredMixin, View):
         return redirect('profile')
     
 
+
 class DeleteReviewView(LoginRequiredMixin, View):
     """Delete user review view."""
     login_url = 'login'
@@ -233,6 +249,7 @@ class DeleteReviewView(LoginRequiredMixin, View):
             messages.error(request, 'An error occurred while deleting the review.')
 
         return redirect('profile')
+
 
 
 class ToggleLikeView(LoginRequiredMixin, View):

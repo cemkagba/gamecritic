@@ -75,12 +75,8 @@ class Game(models.Model):
         """Calculate average rating for this game. Open for the avg calculation changes."""
         return self.posts.aggregate(avg=Avg('rating'))['avg']
 
-    def review_count(self):
-        """Get total number of reviews for this game."""
-        return self.posts.count()
-    
     def get_display_image(self):
-        """Get the best available image for display - prioritizes RAWG API image over uploaded image."""
+        """Returns the best available image for display. RAWG API image is prioritized over uploaded image."""
         if self.img:  # RAWG API image URL
             return self.img
         elif self.image:  # Uploaded image file
@@ -88,9 +84,11 @@ class Game(models.Model):
         return None
 
 
+
+
 class Post(models.Model):
     """Review/Post model with improved validation."""
-    title = models.CharField(max_length=200, blank=True, null=True)
+    title = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True, null=True, help_text="Review content")
     rating = models.FloatField(
         validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],
@@ -149,10 +147,10 @@ class Like(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name="likes")
 
     class Meta:
-        unique_together = ('user','post') #both should be a unique
+        unique_together = ('user','post') #both should be unique
         ordering = ['-id']
 
-#user oluşturmak için sinyal yollu bir fonksiyon tanımladım
+# Signal-based function to create user profile automatically
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """Automatically create user profile when user is created."""

@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const btn = form.querySelector('.like-button');
-      const postId = btn?.dataset.postId;
       const url = form.action;
       const csrf = form.querySelector('[name=csrfmiddlewaretoken]')?.value;
       const formData = new FormData(form);
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
         if (!data.success) throw new Error('Like failed');
 
-        // UI güncelle
+        // UI update
         const card = form.closest(`[class*="review-box-"]`) || document;
         const countEl = card.querySelector('.like-count') || form.querySelector('.like-count');
         const svg = btn.querySelector('svg');

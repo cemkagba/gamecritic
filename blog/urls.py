@@ -1,6 +1,5 @@
 # http://127.0.0.1:8000
 from . import views
-from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
 urlpatterns = [

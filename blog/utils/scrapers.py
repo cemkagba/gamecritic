@@ -32,7 +32,7 @@ class MetacriticScraper:
             self.driver.quit()
         except Exception:
             pass
-
+            
     def search_game(self, game_title):
         """Search for a game on Metacritic and scrape its score and description."""
         try:
@@ -106,10 +106,14 @@ class MetacriticScraper:
 
     def create_slug(self, title):
         """Convert the game title into a Metacritic-friendly slug."""
+        # Convert to lowercase
         slug = title.lower()
-        slug = re.sub(r'[^\w\s-]', '', slug)       # Remove special characters
-        slug = re.sub(r'[-\s]+', '-', slug)        # Replace spaces with hyphens
-        slug = slug.strip('-')                     # Trim hyphens at start and end
+        # Remove special characters
+        slug = re.sub(r'[^\w\s-]', '', slug)
+        # Replace spaces with hyphens
+        slug = re.sub(r'[-\s]+', '-', slug)
+        # Trim hyphens at start and end
+        slug = slug.strip('-')
         return slug
 
 
@@ -124,7 +128,6 @@ class GameSpotScrapper():
 
     def search_game(self,game_title):
 
-
         try:
             title_slug = self.create_slug(game_title)
 
@@ -133,7 +136,7 @@ class GameSpotScrapper():
             print(f"URL: {url}")
 
 
-            response= requests.get(url,headers=self.HEADERS ,timeout=15)
+            response= requests.get(url,headers=self.HEADERS ,timeout=15) #max latency 15 sec
             response.raise_for_status()
             soup = BeautifulSoup(response.content,"html.parser")
 
@@ -142,7 +145,7 @@ class GameSpotScrapper():
             platform_list = soup.find('ul',class_='system-list')
 
             if platform_list:
-                platform_items = platform_list.find_all('li',class_=lambda x:x and 'system' in x)
+                platform_items = platform_list.find_all('li', class_='system')
 
                 for item in platform_items:
                     platform_span = item.find('span' , itemprop="device")

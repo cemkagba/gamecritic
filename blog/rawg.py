@@ -1,10 +1,11 @@
 import requests
-from .models import Game
+import os
+from dotenv import load_dotenv
 
 class RAWGAPIClient:
     def __init__(self):
-        
-        self.api_key = "526549ab6f07446f8e785153b4809445"
+        load_dotenv()
+        self.api_key = os.getenv("RAWG_API_KEY")
         self.base_url = "https://api.rawg.io/api"
     
     def search_game(self, game_name):
@@ -21,7 +22,7 @@ class RAWGAPIClient:
         
         try:
             response = requests.get(url, params=params)
-            response.raise_for_status()
+            response.raise_for_status()  # Raises an HTTPError if the HTTP request returned an unsuccessful status code
             data = response.json()
             
             if data['results']:

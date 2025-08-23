@@ -132,7 +132,7 @@
                         <div class="bg-gray-50 p-4 rounded-lg shadow-sm review-box-{{ post.id }}" data-review-id="{{ post.id }}">
                             <div class="flex justify-between items-center mb-2">
                                 <div class="flex-1">
-                                    <h4 class="text-lg font-medium text-gray-800 mb-1">Title : {{ post.title }}</h4>
+                                    <h4 class="text-lg font-medium text-gray-800 mb-1">{{ post.title|default_if_none:"" }}</h4>
                                     <div class="flex items-center">
                                         <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold review-rating review-rating-{{ post.id }}">Rating : {{ post.rating }}/5</span>
                                     </div>
@@ -193,7 +193,7 @@
 
                             <!-- I added data-attrib for JS update -->
                             <div class="text-xs text-gray-500" data-updated-at>
-                                {{ post.updated_at|date:"M d, Y \\a\\t H:i" }}
+                                {{ post.updated_at|date:"M d, Y" }}
                             </div>
                             </div>
                             
@@ -201,11 +201,18 @@
                                 <form method="POST" action="{% url 'update_review' post.id %}" class="space-y-4">
                                     {% csrf_token %}
                                     
-                                    {% if messages %}
+                                    {% if review_message %}
                                         <div class="mb-4">
-                                            {% for message in messages %}
-                                                <div class="p-2 rounded text-white mb-2 {% if message.tags == 'error' %}bg-red-500{% elif message.tags == 'success' %}bg-green-500{% else %}bg-blue-500{% endif %}">
-                                                    {{ message }}
+                                            <div class="p-2 rounded text-white mb-2 bg-green-500">
+                                                {{ review_message }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if review_errors %}
+                                        <div class="mb-4">
+                                            {% for error in review_errors %}
+                                                <div class="p-2 rounded text-white mb-2 bg-red-500">
+                                                    {{ error }}
                                                 </div>
                                             {% endfor %}
                                         </div>
@@ -221,7 +228,7 @@
                                             </label>
                                             <input type="text" name="title" value="{{ post.title }}" 
                                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" 
-                                                   placeholder="Enter review title" required>
+                                                   placeholder="Enter review title">
                                         </div>
                                         
                                         <!-- Rating Field -->

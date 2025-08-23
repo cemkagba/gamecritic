@@ -1,16 +1,15 @@
-
 from googleapiclient.discovery import build
 import os
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 load_dotenv()
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
+
 
 def _pick_public_embeddable(video_ids):
     """Fetch video status with videos.list and return the first ID that is public + embeddable."""
-    
+    # Return the first video that is public and embeddable
     if not video_ids:
         return None
     details = youtube.videos().list(
@@ -22,22 +21,22 @@ def _pick_public_embeddable(video_ids):
     for v in details.get("items", []):
         st = v.get("status", {})
         if st.get("privacyStatus") == "public" and st.get("embeddable", False):
-            
             return {
                 "title": v["snippet"]["title"],
-                "video_id": v["id"],                         
+                "video_id": v["id"],
             }
     return None
 
+
 def _search_one(query_text, max_try=5):
-    """Aramadan birkaç aday çek, sonra public+embeddable ilkini seç."""
+    """Fetch several candidates from search, then pick the first public+embeddable one."""
     resp = youtube.search().list(
         q=query_text,
-        part="id",                 
+        part="id",
         type="video",
         maxResults=max_try,
-        videoEmbeddable="true",    
-        videoSyndicated="true"    
+        videoEmbeddable="true",
+        videoSyndicated="true"
     ).execute()
 
     ids = [it["id"]["videoId"] for it in resp.get("items", []) if "id" in it and "videoId" in it["id"]]

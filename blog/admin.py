@@ -10,7 +10,7 @@ class GameAdmin(admin.ModelAdmin):
     search_fields = ("title", "is_home",)
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
+        form = super().get_form(request, obj, **kwargs)        #for leave the genre part in admin panel
         form.base_fields['genres'].required = False
         return form
 

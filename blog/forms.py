@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
-from .models import Post, Game, Genre
+from .models import Post, Genre
 
 
 class GamePost(forms.ModelForm):
@@ -52,7 +52,7 @@ class GamePost(forms.ModelForm):
     
     def clean_description(self):
         """Validate description length."""
-        description = self.cleaned_data.get('description')
+        description = self.cleaned_data.get('description')  #filtered data with the where req met 
         return description
 
 

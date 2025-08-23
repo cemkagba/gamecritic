@@ -1,4 +1,4 @@
-// Review Edit AJAX (tek kopya)
+// Review Edit AJAX (single copy)
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[id^="edit-form-"] form').forEach(function (form) {
     form.addEventListener('submit', function (e) {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .then((data) => {
         if (!data.success) {
-          // form hataları
+       
           let errorMsg = '';
           for (let field in data.errors) errorMsg += data.errors[field].join('<br>') + '<br>';
           let errorDiv = form.querySelector('.ajax-error');
@@ -41,28 +41,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const reviewBox = form.closest('.bg-gray-50');
 
-        // Başlık (profile’da “Title : …” şeklinde; iki durumu da destekle)
+  // Title (in profile: "Title : ..."; supports both cases)
         const titleEl = reviewBox.querySelector('h4');
         if (titleEl) {
           const label = titleEl.textContent.includes(':') ? titleEl.textContent.split(':')[0] + ' : ' : '';
           titleEl.textContent = `${label}${data.review.title}`;
         }
 
-        // Açıklama: sadece bu review’a ait kapsayıcıyı güncelle
+  // Description: only update the container for this review
         const descEl = reviewBox.querySelector(`.review-description-${postId}`) ||
                        reviewBox.querySelector('p.text-gray-700');
         if (descEl) descEl.innerHTML = data.review.description;
 
-        // Rating: id’li varsa onu, yoksa genel sınıfı güncelle
+  // Rating: update by id if exists, otherwise update general class
         const ratingEl = reviewBox.querySelector(`.review-rating-${postId}`) ||
                          reviewBox.querySelector('.review-rating');
         if (ratingEl) ratingEl.textContent = `Rating : ${data.review.rating}/5`;
 
-        // Tarih: extra_details’ta var, profile’da yok → varsa güncelle
+  // Date: exists in extra_details, not in profile → update if exists
         const updatedAtEl = reviewBox.querySelector('.text-xs.text-gray-500,[data-updated-at]');
         if (updatedAtEl) updatedAtEl.textContent = data.review.updated_at;
 
-        // Formu kapat
+  // Close the form
         form.closest('[id^="edit-form-"]').classList.add('hidden');
       })
       .catch((err) => {
